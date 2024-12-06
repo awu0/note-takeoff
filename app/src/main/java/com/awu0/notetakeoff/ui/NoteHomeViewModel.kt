@@ -1,4 +1,4 @@
-package com.awu0.notetakeoff.ui.home
+package com.awu0.notetakeoff.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

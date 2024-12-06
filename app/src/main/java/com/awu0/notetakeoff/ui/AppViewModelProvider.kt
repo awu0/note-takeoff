@@ -5,7 +5,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.awu0.notetakeoff.NoteApplication
-import com.awu0.notetakeoff.ui.home.NoteHomeViewModel
 
 /**
  * Provides the entire app with all the view models

@@ -12,7 +12,7 @@ import com.awu0.notetakeoff.NoteApplication
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            NoteHomeViewModel(noteApplication().container.noteRepository)
+            HomeViewModel(noteApplication().container.noteRepository)
         }
     }
 }

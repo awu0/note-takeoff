@@ -23,19 +23,19 @@ import com.awu0.notetakeoff.ui.AppViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
 import com.awu0.notetakeoff.model.Note
-import com.awu0.notetakeoff.ui.NoteHomeViewModel
+import com.awu0.notetakeoff.ui.HomeViewModel
 
 @Composable
-fun NoteHome(
+fun HomeScreen(
     onNewNoteButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NoteHomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val noteHomeUiState by viewModel.noteHomeUiState.collectAsState()
+    val homeUiState by viewModel.homeUiState.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         Column {
-            NoteList(noteHomeUiState.noteList)
+            NoteList(homeUiState.noteList)
         }
 
         FloatingActionButton(

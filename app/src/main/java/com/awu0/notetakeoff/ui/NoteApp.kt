@@ -1,12 +1,10 @@
 package com.awu0.notetakeoff.ui
 
-import android.provider.ContactsContract.CommonDataKinds.Note
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,15 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.awu0.notetakeoff.R
-import com.awu0.notetakeoff.ui.home.NoteHome
+import com.awu0.notetakeoff.ui.home.HomeScreen
 
 enum class NoteScreen(@StringRes val title: Int) {
     Home(title = R.string.app_name),
@@ -89,7 +85,7 @@ fun NoteApp() {
             startDestination = NoteScreen.Home.name,
         ) {
             composable(route = NoteScreen.Home.name) {
-                NoteHome(
+                HomeScreen(
                     onNewNoteButtonClicked = {
                         navController.navigate(NoteScreen.NewNote.name)
                     },

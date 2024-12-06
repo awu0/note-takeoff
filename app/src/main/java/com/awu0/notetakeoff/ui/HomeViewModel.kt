@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-data class NoteHomeUiState(val noteList: List<Note> = listOf())
+data class HomeUiState(val noteList: List<Note> = listOf())
 
-class NoteHomeViewModel(noteRepository: NoteRepository) : ViewModel() {
+class HomeViewModel(noteRepository: NoteRepository) : ViewModel() {
 
-    val noteHomeUiState: StateFlow<NoteHomeUiState> =
-        noteRepository.getAllNotes().map { NoteHomeUiState(it) }
+    val homeUiState: StateFlow<HomeUiState> =
+        noteRepository.getAllNotes().map { HomeUiState(it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = NoteHomeUiState()
+                initialValue = HomeUiState()
             )
 
     companion object {

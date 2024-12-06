@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.awu0.notetakeoff.ui.AppViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
@@ -34,7 +35,6 @@ fun NoteHome(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column {
-            Text("HELLO")
             NoteList(noteHomeUiState.noteList)
         }
 
@@ -61,10 +61,12 @@ fun NoteList(
     LazyColumn {
         items(items = noteList, key = {it.id}) { item ->
             Text(
-                text = item.title
+                text = item.title,
+                fontSize = 24.sp,
             )
             Text(
-                text = item.content
+                text = item.content,
+                modifier = modifier.padding(bottom = 8.dp)
             )
         }
     }

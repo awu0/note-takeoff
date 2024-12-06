@@ -25,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.awu0.notetakeoff.R
 import com.awu0.notetakeoff.ui.home.HomeScreen
+import com.awu0.notetakeoff.ui.new_note.NewNoteScreen
 
 enum class NoteScreen(@StringRes val title: Int) {
     Home(title = R.string.app_name),
@@ -94,9 +95,8 @@ fun NoteApp() {
             }
 
             composable(route = NoteScreen.NewNote.name) {
-                Text(
-                    text = "NEW NOTE HERE",
-                    fontSize = 64.sp
+                NewNoteScreen(
+                    modifier = Modifier.fillMaxSize().padding(contentPadding)
                 )
             }
         }

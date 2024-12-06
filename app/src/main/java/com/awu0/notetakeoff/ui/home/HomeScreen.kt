@@ -35,7 +35,10 @@ fun HomeScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column {
-            NoteList(homeUiState.noteList)
+            NoteList(
+                homeUiState.noteList,
+                modifier = Modifier.padding(8.dp)
+            )
         }
 
         FloatingActionButton(
@@ -58,16 +61,32 @@ fun NoteList(
     noteList: List<Note>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         items(items = noteList, key = {it.id}) { item ->
-            Text(
-                text = item.title,
-                fontSize = 24.sp,
-            )
-            Text(
-                text = item.content,
-                modifier = modifier.padding(bottom = 8.dp)
+            NoteItem(
+                item,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
+    }
+}
+
+@Composable
+fun NoteItem(
+    note: Note,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = note.title,
+            fontSize = 24.sp,
+        )
+        Text(
+            text = note.content,
+        )
     }
 }

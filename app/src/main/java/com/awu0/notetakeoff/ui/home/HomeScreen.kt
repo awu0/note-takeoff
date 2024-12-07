@@ -87,7 +87,7 @@ fun NoteList(
         items(items = noteList, key = {it.id}) { item ->
             NoteItem(
                 item,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small))
             )
         }
     }

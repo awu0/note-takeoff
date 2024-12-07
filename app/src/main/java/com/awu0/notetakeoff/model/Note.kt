@@ -12,3 +12,9 @@ data class Note (
     val content: String,
     val timestamp: Long = System.currentTimeMillis()
 )
+
+fun Note.toNoteDetails(): NoteDetails = NoteDetails(
+    title = title,
+    content = content,
+    timestamp = timestamp
+)

@@ -1,12 +1,14 @@
 package com.awu0.notetakeoff.ui
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.awu0.notetakeoff.NoteApplication
 import com.awu0.notetakeoff.ui.home.HomeViewModel
 import com.awu0.notetakeoff.ui.new_note.NewNoteViewModel
+import com.awu0.notetakeoff.ui.new_note.NoteDetailsViewModel
 
 /**
  * Provides the entire app with all the view models
@@ -19,6 +21,13 @@ object AppViewModelProvider {
 
         initializer {
             NewNoteViewModel(noteApplication().container.noteRepository)
+        }
+
+        initializer {
+            NoteDetailsViewModel(
+                this.createSavedStateHandle(),
+                noteApplication().container.noteRepository
+            )
         }
     }
 }

@@ -1,8 +1,10 @@
 <resources>
     <string name="back_button">Back</string>
     <string name="app_name">Note Takeoff</string>
-    <string name="new_note">Add a New Note</string>
+    <string name="add_new_note">Add a New Note</string>
     <string name="new_note_title">Title</string>
     <string name="new_note_content">Content</string>
     <string name="new_note_save">Save Note</string>
+    <string name="note_detail">Details</string>
+    <string name="edit_note">Edit Note</string>
 </resources>

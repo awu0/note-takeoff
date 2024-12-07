@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.awu0.notetakeoff.data.NoteRepository
-import com.awu0.notetakeoff.model.Note
+import com.awu0.notetakeoff.model.NoteDetails
+import com.awu0.notetakeoff.model.toNote
 
 class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel() {
 
@@ -35,14 +36,4 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
 data class NewNoteUiState(
     val noteDetails: NoteDetails = NoteDetails(),
     val isEntryValid: Boolean = false
-)
-
-data class NoteDetails(
-    val title: String = "",
-    val content: String = "",
-)
-
-fun NoteDetails.toNote(): Note = Note(
-    title = title,
-    content = content
 )

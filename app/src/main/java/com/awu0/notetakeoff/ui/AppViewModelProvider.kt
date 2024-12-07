@@ -5,6 +5,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.awu0.notetakeoff.NoteApplication
+import com.awu0.notetakeoff.ui.home.HomeViewModel
+import com.awu0.notetakeoff.ui.new_note.NewNoteViewModel
 
 /**
  * Provides the entire app with all the view models
@@ -13,6 +15,10 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(noteApplication().container.noteRepository)
+        }
+
+        initializer {
+            NewNoteViewModel(noteApplication().container.noteRepository)
         }
     }
 }

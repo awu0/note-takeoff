@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,7 +24,6 @@ import com.awu0.notetakeoff.ui.AppViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
 import com.awu0.notetakeoff.model.Note
-import com.awu0.notetakeoff.ui.HomeViewModel
 
 @Composable
 fun HomeScreen(
@@ -34,11 +34,18 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        Column {
-            NoteList(
-                homeUiState.noteList,
-                modifier = Modifier.padding(8.dp)
+
+        if (homeUiState.noteList.isEmpty()) {
+            NoNotesFoundScreen(
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
             )
+        } else {
+            Column {
+                NoteList(
+                    homeUiState.noteList,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
+            }
         }
 
         FloatingActionButton(
@@ -53,6 +60,19 @@ fun HomeScreen(
                 contentDescription = stringResource(R.string.new_note)
             )
         }
+    }
+}
+
+@Composable
+fun NoNotesFoundScreen(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = "No notes found. Add some!"
+        )
     }
 }
 

@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,8 +37,8 @@ fun NoteAppBar(
     @StringRes currentScreenTitle: Int,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     CenterAlignedTopAppBar(
         title = { Text(stringResource(currentScreenTitle)) },
@@ -96,6 +95,7 @@ fun NoteApp() {
 
             composable(route = NoteScreen.NewNote.name) {
                 NewNoteScreen(
+                    navigateBackToHomeScreen = { navController.navigate(NoteScreen.Home.name) },
                     modifier = Modifier.fillMaxSize().padding(contentPadding)
                 )
             }

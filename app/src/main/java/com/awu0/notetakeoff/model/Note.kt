@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Note (
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
 
     val title: String,
     val content: String,
-    val timestamp: Long
+    val timestamp: Long = System.currentTimeMillis()
 )

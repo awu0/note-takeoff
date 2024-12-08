@@ -2,7 +2,9 @@ package com.awu0.notetakeoff.ui.note_details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -75,16 +77,18 @@ fun NoteDetailsScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .padding(contentPadding)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(contentPadding)
                     .verticalScroll(scrollState)
             ) {
                 NoteDetailsBody(
                     note = uiState.value.noteDetails.toNote(),
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
                 )
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_note_details)))
             }
 
             FloatingActionButton(

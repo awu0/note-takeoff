@@ -52,9 +52,9 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             NoteAppBar(
-                currentScreenTitle = HomeScreenDestination.titleRes,
+                currentScreenTitle = stringResource(HomeScreenDestination.titleRes),
                 canNavigateBack = false,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)

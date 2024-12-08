@@ -48,7 +48,7 @@ fun NewNoteScreen(
     Scaffold(
         topBar = {
             NoteAppBar(
-                currentScreenTitle = NewNoteDestination.titleRes,
+                currentScreenTitle = stringResource(NewNoteDestination.titleRes),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp,
                 scrollBehavior = scrollBehavior

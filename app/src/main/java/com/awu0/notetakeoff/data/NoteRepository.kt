@@ -9,4 +9,6 @@ interface NoteRepository {
     fun getNote(id: Int): Flow<Note?>
 
     suspend fun insertNote(note: Note)
+
+    suspend fun updateNote(note: Note)
 }

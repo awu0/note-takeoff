@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.awu0.notetakeoff.NoteApplication
+import com.awu0.notetakeoff.ui.edit_note.EditNoteViewModel
 import com.awu0.notetakeoff.ui.home.HomeViewModel
 import com.awu0.notetakeoff.ui.new_note.NewNoteViewModel
 import com.awu0.notetakeoff.ui.new_note.NoteDetailsViewModel
@@ -25,6 +26,13 @@ object AppViewModelProvider {
 
         initializer {
             NoteDetailsViewModel(
+                this.createSavedStateHandle(),
+                noteApplication().container.noteRepository
+            )
+        }
+
+        initializer {
+            EditNoteViewModel(
                 this.createSavedStateHandle(),
                 noteApplication().container.noteRepository
             )

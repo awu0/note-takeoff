@@ -76,7 +76,7 @@ fun NewNoteScreen(
 
 @Composable
 fun NoteEntryBody(
-    noteUiState: NewNoteUiState,
+    noteUiState: NoteUiState,
     onNoteValueChange: (NoteDetails) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier

@@ -14,6 +14,7 @@ data class Note (
 )
 
 fun Note.toNoteDetails(): NoteDetails = NoteDetails(
+    id = id,
     title = title,
     content = content,
     timestamp = timestamp

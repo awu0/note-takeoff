@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.awu0.notetakeoff.ui.edit_note.EditNoteDestination
+import com.awu0.notetakeoff.ui.edit_note.EditNoteScreen
 import com.awu0.notetakeoff.ui.home.HomeScreen
 import com.awu0.notetakeoff.ui.home.HomeScreenDestination
 import com.awu0.notetakeoff.ui.new_note.NewNoteDestination
@@ -46,7 +48,19 @@ fun NoteNavGraph(
         ) {
             NoteDetailsScreen(
                 navigateBack = { navController.navigateUp() },
-                navigateToEditNote = {},
+                navigateToEditNote = { navController.navigate("${EditNoteDestination.route}/${it}") },
+            )
+        }
+
+        composable(
+            route = EditNoteDestination.routeWithArgs,
+            arguments = listOf(navArgument(NoteDetailsDestination.noteIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            EditNoteScreen(
+                navigateBack = { navController.navigateUp() },
+
             )
         }
     }

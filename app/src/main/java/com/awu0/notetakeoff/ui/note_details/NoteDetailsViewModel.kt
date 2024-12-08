@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class NoteDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val noteRepository: NoteRepository
+    noteRepository: NoteRepository
 ) : ViewModel() {
 
     private val noteId: Int = checkNotNull(savedStateHandle[NoteDetailsDestination.noteIdArg])

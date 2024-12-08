@@ -10,11 +10,11 @@ import com.awu0.notetakeoff.model.toNote
 
 class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel() {
 
-    var noteUiState by mutableStateOf(NewNoteUiState())
+    var noteUiState by mutableStateOf(NoteUiState())
         private set
 
     fun updateUiState(noteDetails: NoteDetails) {
-        noteUiState = NewNoteUiState(
+        noteUiState = NoteUiState(
             noteDetails = noteDetails,
             isEntryValid = validateInput(noteDetails)
         )
@@ -33,7 +33,7 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     }
 }
 
-data class NewNoteUiState(
+data class NoteUiState(
     val noteDetails: NoteDetails = NoteDetails(),
     val isEntryValid: Boolean = false
 )

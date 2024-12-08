@@ -15,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -73,15 +72,20 @@ fun NoteDetailsScreen(
         }
     ) { contentPadding ->
 
-        Box(modifier = modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-            .verticalScroll(scrollState)) {
-
-            NoteDetailsBody(
-                note = uiState.value.noteDetails.toNote(),
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-            )
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .verticalScroll(scrollState)
+            ) {
+                NoteDetailsBody(
+                    note = uiState.value.noteDetails.toNote(),
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                )
+            }
 
             FloatingActionButton(
                 onClick = { navigateToEditNote(uiState.value.noteDetails.id) },

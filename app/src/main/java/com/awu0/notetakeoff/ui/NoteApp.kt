@@ -1,5 +1,8 @@
 package com.awu0.notetakeoff.ui
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,6 +13,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.compose.rememberNavController
@@ -26,12 +30,17 @@ fun NoteAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     navigateUp: () -> Unit = {},
 ) {
+    val scrollState = rememberScrollState()
+
     TopAppBar(
         title = {
             Text(
                 text = currentScreenTitle,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .horizontalScroll(scrollState)
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
             )
         },
         scrollBehavior = scrollBehavior,

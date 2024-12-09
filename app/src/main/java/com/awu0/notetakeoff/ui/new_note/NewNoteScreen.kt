@@ -95,7 +95,7 @@ fun NoteEntryBody(
         OutlinedTextField(
             label = { Text(stringResource(R.string.new_note_title)) },
             value = noteUiState.noteDetails.title,
-            onValueChange = { onNoteValueChange(noteDetails.copy(title = it)) },
+            onValueChange = { if (it.length <= 50) onNoteValueChange(noteDetails.copy(title = it)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )

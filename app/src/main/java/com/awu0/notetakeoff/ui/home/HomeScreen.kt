@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
@@ -141,11 +142,13 @@ fun NoteItem(
             Text(
                 text = note.title,
                 fontSize = 24.sp,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = note.content,
-                maxLines = 5
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

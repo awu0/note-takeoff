@@ -2,6 +2,7 @@ package com.awu0.notetakeoff.ui.note_details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +42,9 @@ import com.awu0.notetakeoff.ui.NoteAppBar
 import com.awu0.notetakeoff.ui.new_note.NoteDetailsViewModel
 import com.awu0.notetakeoff.ui.theme.NoteTakeoffTheme
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object NoteDetailsDestination : NavigationDestination {
     override val route = "note_details"
@@ -62,6 +66,7 @@ fun NoteDetailsScreen(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
+    var showDetailsDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -82,6 +87,7 @@ fun NoteDetailsScreen(
                     },
                 actions = {
                     NoteDetailsContextMenu(
+                        onDetails = { showDetailsDialog = true },
                         onEdit = { navigateToEditNote(uiState.value.noteDetails.id) },
                         onDelete = { showDeleteDialog = true }
                     )
@@ -118,6 +124,13 @@ fun NoteDetailsScreen(
                         showDeleteDialog = false
                     }
                 )
+            } else if (showDetailsDialog) {
+                DetailsDialog(
+                    note = uiState.value.noteDetails.toNote(),
+                    onDone = {
+                        showDetailsDialog = false
+                    }
+                )
             }
         }
     }
@@ -139,6 +152,7 @@ fun NoteDetailsBody(
 
 @Composable
 fun NoteDetailsContextMenu(
+    onDetails: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
@@ -158,6 +172,15 @@ fun NoteDetailsContextMenu(
             expanded = isMenuExpanded,
             onDismissRequest = { isMenuExpanded = false }
         ) {
+            // details
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.note_detail)) },
+                onClick = {
+                    isMenuExpanded = false
+                    onDetails()
+                }
+            )
+
             // edit
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.edit_note)) },
@@ -177,6 +200,48 @@ fun NoteDetailsContextMenu(
             )
         }
     }
+}
+
+@Composable
+private fun DetailsDialog(
+    note: Note,
+    onDone: () -> Unit,
+) {
+    val dateFormatter = remember {
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    }
+    val timeFormatter = remember {
+        SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    }
+
+    val date = remember(note.timestamp) {
+        dateFormatter.format(Date(note.timestamp))
+    }
+    val time = remember(note.timestamp) {
+        timeFormatter.format(Date(note.timestamp))
+    }
+
+    AlertDialog(
+        onDismissRequest = onDone,
+        title = { Text(stringResource(R.string.note_detail)) },
+        text = {
+            Column {
+                Row {
+                    Text(stringResource(R.string.date_created) + ": ")
+                    Text(text = date)
+                }
+                Row {
+                    Text(stringResource(R.string.time_created) + ": ")
+                    Text(text = time)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDone) {
+                Text(stringResource(R.string.done))
+            }
+        },
+    )
 }
 
 @Composable

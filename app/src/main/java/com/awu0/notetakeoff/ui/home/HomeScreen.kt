@@ -1,13 +1,15 @@
 package com.awu0.notetakeoff.ui.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -150,14 +152,17 @@ fun NoteList(
     onNoteClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        verticalItemSpacing = dimensionResource(R.dimen.padding_extra_small),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small)),
         modifier = modifier
     ) {
         items(items = noteList, key = { it.id }) { item ->
             NoteItem(
                 item,
                 modifier = Modifier
-                    .padding(bottom = dimensionResource(R.dimen.padding_small))
+                    .fillMaxWidth()
                     .clickable {
                         onNoteClick(item.id)
                     }

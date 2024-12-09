@@ -16,7 +16,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,7 +36,6 @@ import com.awu0.notetakeoff.R
 import com.awu0.notetakeoff.model.Note
 import com.awu0.notetakeoff.navigation.NavigationDestination
 import com.awu0.notetakeoff.ui.AppViewModelProvider
-import com.awu0.notetakeoff.ui.NoteAppBar
 import com.awu0.notetakeoff.ui.theme.NoteTakeoffTheme
 
 object HomeScreenDestination : NavigationDestination {
@@ -52,32 +54,37 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val filteredNotes = homeUiState.noteList.filter { note ->
+        note.title.contains(viewModel.searchQuery.trim(), ignoreCase = true) ||
+                note.content.contains(viewModel.searchQuery.trim(), ignoreCase = true)
+    }
+
     Scaffold(
         topBar = {
-            NoteAppBar(
-                currentScreenTitle = stringResource(HomeScreenDestination.titleRes),
-                canNavigateBack = false,
-                scrollBehavior = scrollBehavior,
+            HomeSearchBar(
+                searchQuery = viewModel.searchQuery,
+                updateQuery = viewModel::updateQuery,
+                scrollBehavior = scrollBehavior
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->
-        Box(modifier = modifier
-            .fillMaxSize()
-            .padding(contentPadding)) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+        ) {
 
             if (homeUiState.noteList.isEmpty()) {
                 NoNotesFoundScreen(
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
                 )
             } else {
-                Column {
-                    NoteList(
-                        homeUiState.noteList,
-                        onNoteClick = navigateToNoteUpdate,
-                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
-                    )
-                }
+                NoteList(
+                    noteList = filteredNotes,
+                    onNoteClick = navigateToNoteUpdate,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
             }
 
             FloatingActionButton(
@@ -94,7 +101,34 @@ fun HomeScreen(
             }
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeSearchBar(
+    searchQuery: String,
+    updateQuery: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) {
+    TopAppBar(
+        title = {
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(R.dimen.padding_medium))
+            ) {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { updateQuery(it) },
+                    placeholder = { Text(stringResource(R.string.search_notes)) },
+                    modifier = modifier.fillMaxWidth()
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -122,9 +156,11 @@ fun NoteList(
         items(items = noteList, key = { it.id }) { item ->
             NoteItem(
                 item,
-                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)).clickable {
-                    onNoteClick(item.id)
-                }
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
+                    .clickable {
+                        onNoteClick(item.id)
+                    }
             )
         }
     }
@@ -161,8 +197,16 @@ fun NoteItem(
 fun NoteListPreview() {
     val sampleNotes = listOf(
         Note(id = 1, title = "First Note", content = "This is the first note."),
-        Note(id = 2, title = "Second Note", content = "Here's some more content for the second note."),
-        Note(id = 3, title = "Third Note", content = "The third note has a lot of interesting details."),
+        Note(
+            id = 2,
+            title = "Second Note",
+            content = "Here's some more content for the second note."
+        ),
+        Note(
+            id = 3,
+            title = "Third Note",
+            content = "The third note has a lot of interesting details."
+        ),
     )
 
     NoteTakeoffTheme {

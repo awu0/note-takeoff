@@ -1,5 +1,8 @@
 package com.awu0.notetakeoff.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awu0.notetakeoff.data.NoteRepository
@@ -13,6 +16,9 @@ data class HomeUiState(val noteList: List<Note> = listOf())
 
 class HomeViewModel(noteRepository: NoteRepository) : ViewModel() {
 
+    var searchQuery by mutableStateOf("")
+        private set
+
     val homeUiState: StateFlow<HomeUiState> =
         noteRepository.getAllNotes().map { HomeUiState(it) }
             .stateIn(
@@ -20,6 +26,10 @@ class HomeViewModel(noteRepository: NoteRepository) : ViewModel() {
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = HomeUiState()
             )
+
+    fun updateQuery(query: String) {
+        searchQuery = query
+    }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

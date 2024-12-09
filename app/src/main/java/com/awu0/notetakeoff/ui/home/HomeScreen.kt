@@ -26,6 +26,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
@@ -33,6 +34,7 @@ import com.awu0.notetakeoff.model.Note
 import com.awu0.notetakeoff.navigation.NavigationDestination
 import com.awu0.notetakeoff.ui.AppViewModelProvider
 import com.awu0.notetakeoff.ui.NoteAppBar
+import com.awu0.notetakeoff.ui.theme.NoteTakeoffTheme
 
 object HomeScreenDestination : NavigationDestination {
     override val route = "home_screen"
@@ -151,5 +153,22 @@ fun NoteItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NoteListPreview() {
+    val sampleNotes = listOf(
+        Note(id = 1, title = "First Note", content = "This is the first note."),
+        Note(id = 2, title = "Second Note", content = "Here's some more content for the second note."),
+        Note(id = 3, title = "Third Note", content = "The third note has a lot of interesting details."),
+    )
+
+    NoteTakeoffTheme {
+        NoteList(
+            noteList = sampleNotes,
+            onNoteClick = {}
+        )
     }
 }

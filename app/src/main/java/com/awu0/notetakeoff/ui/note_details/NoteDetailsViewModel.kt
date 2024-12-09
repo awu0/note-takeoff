@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awu0.notetakeoff.data.NoteRepository
 import com.awu0.notetakeoff.model.NoteDetails
+import com.awu0.notetakeoff.model.toNote
 import com.awu0.notetakeoff.model.toNoteDetails
 import com.awu0.notetakeoff.ui.note_details.NoteDetailsDestination
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class NoteDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    noteRepository: NoteRepository
+    private val noteRepository: NoteRepository
 ) : ViewModel() {
 
     private val noteId: Int = checkNotNull(savedStateHandle[NoteDetailsDestination.noteIdArg])
@@ -30,6 +31,10 @@ class NoteDetailsViewModel(
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = NoteDetailsUiState()
             )
+
+    suspend fun deleteNote() {
+        noteRepository.deleteNote(uiState.value.noteDetails.toNote())
+    }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

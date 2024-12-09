@@ -22,6 +22,7 @@ fun NoteAppBar(
     currentScreenTitle: String,
     canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
+    actions: @Composable() (() -> Unit)? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     navigateUp: () -> Unit = {},
 ) {
@@ -44,6 +45,9 @@ fun NoteAppBar(
                     )
                 }
             }
+        },
+        actions = {
+            actions?.invoke()
         }
     )
 }

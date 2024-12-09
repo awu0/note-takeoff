@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -27,9 +29,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -123,8 +128,18 @@ fun HomeSearchBar(
                 TextField(
                     value = searchQuery,
                     onValueChange = { updateQuery(it) },
+                    maxLines = 1,
+                    textStyle = TextStyle(
+                        fontSize = 16.sp
+                    ),
                     placeholder = { Text(stringResource(R.string.search_notes)) },
-                    modifier = modifier.fillMaxWidth()
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corners))),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent, // removes the bottom line when focused
+                        unfocusedIndicatorColor = Color.Transparent, // removes the bottom line when unfocused
+                    ),
                 )
             }
         },
@@ -219,5 +234,14 @@ fun NoteListPreview() {
             noteList = sampleNotes,
             onNoteClick = {}
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun HomeSearchBarPreview() {
+    NoteTakeoffTheme {
+        HomeSearchBar("Search", {})
     }
 }

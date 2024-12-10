@@ -38,8 +38,11 @@ class EditNoteViewModel(
     }
 
     fun updateUiState(noteDetails: NoteDetails) {
+        val updatedNoteDetails = noteDetails.copy(
+            lastUpdated = System.currentTimeMillis()
+        )
         noteUiState = NoteUiState(
-            noteDetails = noteDetails,
+            noteDetails = updatedNoteDetails,
             isEntryValid = validateInput(noteDetails)
         )
     }

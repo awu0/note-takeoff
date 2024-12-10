@@ -227,19 +227,18 @@ private fun DetailsDialog(
     note: Note,
     onDone: () -> Unit,
 ) {
-    val dateFormatter = remember {
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    }
-    val timeFormatter = remember {
-        SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    val dateTimeFormatter = remember {
+        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     }
 
-    val date = remember(note.timestamp) {
-        dateFormatter.format(Date(note.timestamp))
+    val dateTimeCreated = remember(note.dateTimeCreated) {
+        dateTimeFormatter.format(Date(note.dateTimeCreated))
     }
-    val time = remember(note.timestamp) {
-        timeFormatter.format(Date(note.timestamp))
+
+    val dateTimeUpdated = remember(note.lastUpdated) {
+        dateTimeFormatter.format(Date(note.lastUpdated))
     }
+
 
     AlertDialog(
         onDismissRequest = onDone,
@@ -247,12 +246,12 @@ private fun DetailsDialog(
         text = {
             Column {
                 Row {
-                    Text(stringResource(R.string.date_created) + ": ")
-                    Text(text = date)
+                    Text(stringResource(R.string.updated) + ": ")
+                    Text(text = dateTimeUpdated)
                 }
                 Row {
-                    Text(stringResource(R.string.time_created) + ": ")
-                    Text(text = time)
+                    Text(stringResource(R.string.created) + ": ")
+                    Text(text = dateTimeCreated)
                 }
             }
         },

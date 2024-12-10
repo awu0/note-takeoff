@@ -13,8 +13,8 @@
     <string name="delete_note">Delete</string>
     <string name="more_options">More options</string>
 
-    <string name="date_created">Date created</string>
-    <string name="time_created">Time created</string>
+    <string name="created">Created</string>
+    <string name="updated">Updated</string>
     <string name="done">Done</string>
 
     <string name="delete_note_title">Delete Note</string>

@@ -23,7 +23,12 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     suspend fun saveNote() {
         if (!noteUiState.isEntryValid) return
 
-        noteRepository.insertNote(noteUiState.noteDetails.toNote())
+        val updatedNoteDetails = noteUiState.noteDetails.copy(
+            dateTimeCreated = System.currentTimeMillis(),
+            lastUpdated = System.currentTimeMillis()
+        )
+
+        noteRepository.insertNote(updatedNoteDetails.toNote())
     }
 
     private fun validateInput(uiState: NoteDetails = noteUiState.noteDetails): Boolean {

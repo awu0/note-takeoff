@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,8 +36,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awu0.notetakeoff.R
@@ -62,9 +65,11 @@ fun HomeScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val filteredNotes = homeUiState.noteList.filter { note ->
-        note.title.contains(viewModel.searchQuery.trim(), ignoreCase = true) ||
-                note.content.contains(viewModel.searchQuery.trim(), ignoreCase = true)
-    }
+        note.title.contains(
+            viewModel.searchQuery.trim(),
+            ignoreCase = true
+        ) || note.content.contains(viewModel.searchQuery.trim(), ignoreCase = true)
+    }.sortedByDescending { it.lastUpdated }
 
     Scaffold(
         topBar = {
@@ -73,8 +78,7 @@ fun HomeScreen(
                 updateQuery = viewModel::updateQuery,
                 scrollBehavior = scrollBehavior
             )
-        },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        }, modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->
         Box(
             modifier = modifier
@@ -123,7 +127,7 @@ fun HomeSearchBar(
             Box(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(dimensionResource(R.dimen.padding_medium))
+                    .padding(end = 16.dp)
             ) {
                 TextField(
                     value = searchQuery,
@@ -163,52 +167,50 @@ fun NoNotesFoundScreen(
 
 @Composable
 fun NoteList(
-    noteList: List<Note>,
-    onNoteClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    noteList: List<Note>, onNoteClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = dimensionResource(R.dimen.padding_extra_small),
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         modifier = modifier
     ) {
         items(items = noteList, key = { it.id }) { item ->
-            NoteItem(
-                item,
+            NoteItem(item,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.item_height))
                     .clickable {
                         onNoteClick(item.id)
-                    }
-            )
+                    })
         }
     }
 }
 
 @Composable
 fun NoteItem(
-    note: Note,
-    modifier: Modifier = Modifier
+    note: Note, modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+    Column {
+        Card(
+            modifier = modifier.fillMaxWidth(),
         ) {
-            Text(
-                text = note.title,
-                fontSize = 24.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = note.content,
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            ) {
+                Text(
+                    text = note.content, maxLines = 6, overflow = TextOverflow.Ellipsis
+                )
+            }
         }
+
+        Text(
+            text = note.title,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -218,22 +220,17 @@ fun NoteListPreview() {
     val sampleNotes = listOf(
         Note(id = 1, title = "First Note", content = "This is the first note."),
         Note(
-            id = 2,
-            title = "Second Note",
-            content = "Here's some more content for the second note."
+            id = 2, title = "Second Note", content = "Here's some more content for the second note."
         ),
         Note(
             id = 3,
             title = "Third Note",
-            content = "The third note has a lot of interesting details."
+            content = "The third note has a lot of interesting details. The third note has a lot of interesting details."
         ),
     )
 
     NoteTakeoffTheme {
-        NoteList(
-            noteList = sampleNotes,
-            onNoteClick = {}
-        )
+        NoteList(noteList = sampleNotes, onNoteClick = {})
     }
 }
 

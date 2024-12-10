@@ -9,7 +9,7 @@ import com.awu0.notetakeoff.NoteApplication
 import com.awu0.notetakeoff.ui.edit_note.EditNoteViewModel
 import com.awu0.notetakeoff.ui.home.HomeViewModel
 import com.awu0.notetakeoff.ui.new_note.NewNoteViewModel
-import com.awu0.notetakeoff.ui.new_note.NoteDetailsViewModel
+import com.awu0.notetakeoff.ui.note_details.NoteDetailsViewModel
 
 /**
  * Provides the entire app with all the view models

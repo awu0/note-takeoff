@@ -1,5 +1,8 @@
-package com.awu0.notetakeoff.ui.new_note
+package com.awu0.notetakeoff.ui.note_details
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,40 +10,55 @@ import com.awu0.notetakeoff.data.NoteRepository
 import com.awu0.notetakeoff.model.NoteDetails
 import com.awu0.notetakeoff.model.toNote
 import com.awu0.notetakeoff.model.toNoteDetails
-import com.awu0.notetakeoff.ui.note_details.NoteDetailsDestination
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import com.awu0.notetakeoff.ui.new_note.NoteUiState
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class NoteDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val noteRepository: NoteRepository
 ) : ViewModel() {
 
+    var noteUiState by mutableStateOf(NoteUiState())
+        private set
+
     private val noteId: Int = checkNotNull(savedStateHandle[NoteDetailsDestination.noteIdArg])
 
-    val uiState: StateFlow<NoteDetailsUiState> =
-        noteRepository.getNote(noteId)
-            .filterNotNull()
-            .map {
-                NoteDetailsUiState(noteDetails = it.toNoteDetails())
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = NoteDetailsUiState()
+    init {
+        viewModelScope.launch {
+            noteUiState = NoteUiState(
+                noteDetails = noteRepository.getNote(noteId)
+                    .filterNotNull()
+                    .first()
+                    .toNoteDetails()
             )
+        }
+    }
 
     suspend fun deleteNote() {
-        noteRepository.deleteNote(uiState.value.noteDetails.toNote())
+        noteRepository.deleteNote(noteUiState.noteDetails.toNote())
     }
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
+    fun updateUiState(noteDetails: NoteDetails) {
+        val updatedNoteDetails = noteDetails.copy(
+            lastUpdated = System.currentTimeMillis()
+        )
+        noteUiState = NoteUiState(
+            noteDetails = updatedNoteDetails,
+            isEntryValid = validateInput(noteDetails)
+        )
+    }
+
+    suspend fun updateNote() {
+        if (!noteUiState.isEntryValid) return
+
+        noteRepository.updateNote(noteUiState.noteDetails.toNote())
+    }
+
+    private fun validateInput(uiState: NoteDetails = noteUiState.noteDetails): Boolean {
+        return with(uiState) {
+            title.isNotBlank()
+        }
     }
 }
-
-data class NoteDetailsUiState(
-    val noteDetails: NoteDetails = NoteDetails(),
-)

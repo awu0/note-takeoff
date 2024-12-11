@@ -1,6 +1,11 @@
 package com.awu0.notetakeoff.ui.home
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,12 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -28,6 +36,8 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -166,10 +176,18 @@ fun NoNotesFoundScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteList(
     noteList: List<Note>, onNoteClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
+
+    val selectedNotes = remember { mutableStateOf(setOf<Int>()) }
+
+    BackHandler(enabled = selectedNotes.value.isNotEmpty()) {
+        selectedNotes.value = emptySet()
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
@@ -178,41 +196,81 @@ fun NoteList(
     ) {
         items(items = noteList, key = { it.id }) { item ->
             NoteItem(item,
+                selected = selectedNotes.value.contains(item.id),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dimensionResource(R.dimen.item_height))
-                    .clickable {
-                        onNoteClick(item.id)
-                    })
+                    .combinedClickable(
+                        onClick = {
+                            if (selectedNotes.value.isNotEmpty()) {
+                                selectedNotes.value = if (selectedNotes.value.contains(item.id)) {
+                                    selectedNotes.value - item.id
+                                } else {
+                                    selectedNotes.value + item.id
+                                }
+                            } else {
+                                onNoteClick(item.id)
+                            }
+                        },
+                        onLongClick = {
+                            selectedNotes.value += item.id
+                        }
+                    )
+            )
         }
     }
 }
 
 @Composable
 fun NoteItem(
-    note: Note, modifier: Modifier = Modifier
+    note: Note,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false
 ) {
-    Column {
-        Card(
-            modifier = modifier.fillMaxWidth(),
-        ) {
-            Column(
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column {
+            Card(
+                modifier = modifier
+                    .fillMaxWidth()
             ) {
-                Text(
-                    text = note.content, maxLines = 6, overflow = TextOverflow.Ellipsis
+                Column(
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    Text(
+                        text = note.content, maxLines = 6, overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            Text(
+                text = note.title,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.W500,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(Color.Gray, shape = CircleShape)
+                    .align(Alignment.TopEnd)
+                    .padding(dimensionResource(R.dimen.padding_extra_small))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = Color.White,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
         }
 
-        Text(
-            text = note.title,
-            maxLines = 1,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.W500,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 

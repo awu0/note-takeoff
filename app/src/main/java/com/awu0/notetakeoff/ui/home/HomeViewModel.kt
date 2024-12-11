@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awu0.notetakeoff.data.NoteRepository
 import com.awu0.notetakeoff.model.Note
+import com.awu0.notetakeoff.model.toNote
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -14,9 +15,12 @@ import kotlinx.coroutines.flow.stateIn
 
 data class HomeUiState(val noteList: List<Note> = listOf())
 
-class HomeViewModel(noteRepository: NoteRepository) : ViewModel() {
+class HomeViewModel(private val noteRepository: NoteRepository) : ViewModel() {
 
     var searchQuery by mutableStateOf("")
+        private set
+
+    var selectedNotes by mutableStateOf(setOf<Int>())
         private set
 
     val homeUiState: StateFlow<HomeUiState> =
@@ -29,6 +33,22 @@ class HomeViewModel(noteRepository: NoteRepository) : ViewModel() {
 
     fun updateQuery(query: String) {
         searchQuery = query
+    }
+
+    fun resetSelectedNotes() {
+        selectedNotes = emptySet()
+    }
+
+    fun addSelectedNote(noteId: Int) {
+        selectedNotes += noteId
+    }
+
+    fun removeSelectedNote(noteId: Int) {
+        selectedNotes -= noteId
+    }
+
+    suspend fun deleteNotes() {
+
     }
 
     companion object {

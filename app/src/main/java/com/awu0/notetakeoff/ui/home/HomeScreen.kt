@@ -3,8 +3,6 @@ package com.awu0.notetakeoff.ui.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,9 +81,13 @@ fun HomeScreen(
         ) || note.content.contains(viewModel.searchQuery.trim(), ignoreCase = true)
     }.sortedByDescending { it.lastUpdated }
 
+    BackHandler(enabled = viewModel.selectedNotes.isNotEmpty()) {
+        viewModel.resetSelectedNotes()
+    }
+
     Scaffold(
         topBar = {
-            HomeSearchBar(
+            HomeBar(
                 searchQuery = viewModel.searchQuery,
                 updateQuery = viewModel::updateQuery,
                 scrollBehavior = scrollBehavior
@@ -105,6 +108,7 @@ fun HomeScreen(
                 NoteList(
                     noteList = filteredNotes,
                     onNoteClick = navigateToNoteUpdate,
+                    viewModel = viewModel,
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
                 )
             }
@@ -127,7 +131,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeSearchBar(
+fun HomeBar(
     searchQuery: String,
     updateQuery: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -179,14 +183,13 @@ fun NoNotesFoundScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteList(
-    noteList: List<Note>, onNoteClick: (Int) -> Unit, modifier: Modifier = Modifier
+    noteList: List<Note>,
+    onNoteClick: (Int) -> Unit,
+    viewModel: HomeViewModel,
+    modifier: Modifier = Modifier,
 ) {
 
-    val selectedNotes = remember { mutableStateOf(setOf<Int>()) }
-
-    BackHandler(enabled = selectedNotes.value.isNotEmpty()) {
-        selectedNotes.value = emptySet()
-    }
+    val selectedNotes = viewModel.selectedNotes
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -196,24 +199,24 @@ fun NoteList(
     ) {
         items(items = noteList, key = { it.id }) { item ->
             NoteItem(item,
-                selected = selectedNotes.value.contains(item.id),
+                selected = selectedNotes.contains(item.id),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dimensionResource(R.dimen.item_height))
                     .combinedClickable(
                         onClick = {
-                            if (selectedNotes.value.isNotEmpty()) {
-                                selectedNotes.value = if (selectedNotes.value.contains(item.id)) {
-                                    selectedNotes.value - item.id
+                            if (selectedNotes.isNotEmpty()) {
+                                if (selectedNotes.contains(item.id)) {
+                                    viewModel.removeSelectedNote(item.id)
                                 } else {
-                                    selectedNotes.value + item.id
+                                    viewModel.addSelectedNote(item.id)
                                 }
                             } else {
                                 onNoteClick(item.id)
                             }
                         },
                         onLongClick = {
-                            selectedNotes.value += item.id
+                            viewModel.addSelectedNote(item.id)
                         }
                     )
             )
@@ -290,7 +293,7 @@ fun NoteListPreview() {
     )
 
     NoteTakeoffTheme {
-        NoteList(noteList = sampleNotes, onNoteClick = {})
+        NoteList(noteList = sampleNotes, onNoteClick = {}, viewModel = viewModel())
     }
 }
 
@@ -299,6 +302,6 @@ fun NoteListPreview() {
 @Composable
 fun HomeSearchBarPreview() {
     NoteTakeoffTheme {
-        HomeSearchBar("Search", {})
+        HomeBar("Search", {})
     }
 }

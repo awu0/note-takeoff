@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awu0.notetakeoff.data.NoteRepository
 import com.awu0.notetakeoff.model.Note
-import com.awu0.notetakeoff.model.toNote
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -47,8 +46,12 @@ class HomeViewModel(private val noteRepository: NoteRepository) : ViewModel() {
         selectedNotes -= noteId
     }
 
-    suspend fun deleteNotes() {
+    suspend fun deleteSelectedNotes() {
+        selectedNotes.forEach { id->
+            noteRepository.deleteNoteById(id)
+        }
 
+        resetSelectedNotes()
     }
 
     companion object {

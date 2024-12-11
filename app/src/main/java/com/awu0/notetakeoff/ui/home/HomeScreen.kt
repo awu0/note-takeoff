@@ -18,12 +18,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,11 +35,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,7 @@ import com.awu0.notetakeoff.model.Note
 import com.awu0.notetakeoff.navigation.NavigationDestination
 import com.awu0.notetakeoff.ui.AppViewModelProvider
 import com.awu0.notetakeoff.ui.theme.NoteTakeoffTheme
+import kotlinx.coroutines.launch
 
 object HomeScreenDestination : NavigationDestination {
     override val route = "home_screen"
@@ -90,6 +92,7 @@ fun HomeScreen(
             HomeBar(
                 searchQuery = viewModel.searchQuery,
                 updateQuery = viewModel::updateQuery,
+                viewModel = viewModel,
                 scrollBehavior = scrollBehavior
             )
         }, modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -134,35 +137,71 @@ fun HomeScreen(
 fun HomeBar(
     searchQuery: String,
     updateQuery: (String) -> Unit,
+    viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     TopAppBar(
         title = {
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp)
-            ) {
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { updateQuery(it) },
+            if (viewModel.selectedNotes.isNotEmpty()) {
+                Text(
+                    text = "${viewModel.selectedNotes.size} ${stringResource(R.string.notes_selected)}",
                     maxLines = 1,
-                    textStyle = TextStyle(
-                        fontSize = 16.sp
-                    ),
-                    placeholder = { Text(stringResource(R.string.search_notes)) },
+                    overflow = TextOverflow.Ellipsis
+                )
+            } else {
+                Box(
                     modifier = modifier
                         .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corners))),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent, // removes the bottom line when focused
-                        unfocusedIndicatorColor = Color.Transparent, // removes the bottom line when unfocused
-                    ),
-                )
+                        .padding(end = 16.dp)
+                ) {
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { updateQuery(it) },
+                        maxLines = 1,
+                        textStyle = TextStyle(
+                            fontSize = 16.sp
+                        ),
+                        placeholder = { Text(stringResource(R.string.search_notes)) },
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corners))),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent, // removes the bottom line when focused
+                            unfocusedIndicatorColor = Color.Transparent, // removes the bottom line when unfocused
+                        ),
+                    )
+                }
             }
         },
-        scrollBehavior = scrollBehavior,
+        navigationIcon = {
+            if (viewModel.selectedNotes.isNotEmpty()) {
+                IconButton(onClick = { viewModel.resetSelectedNotes() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        },
+        actions = {
+            if (viewModel.selectedNotes.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch { viewModel.deleteSelectedNotes() }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete_note)
+                    )
+                }
+            }
+        },
+        scrollBehavior = if (viewModel.selectedNotes.isNotEmpty()) null else scrollBehavior,
         modifier = modifier,
     )
 }
@@ -302,6 +341,6 @@ fun NoteListPreview() {
 @Composable
 fun HomeSearchBarPreview() {
     NoteTakeoffTheme {
-        HomeBar("Search", {})
+        HomeBar("Search", {}, viewModel = viewModel())
     }
 }

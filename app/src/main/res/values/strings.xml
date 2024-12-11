@@ -2,6 +2,7 @@
     <string name="app_name">Note Takeoff</string>
     <string name="search_notes">Search notes</string>
     <string name="back_button">Back</string>
+    <string name="notes_selected">notes selected</string>
 
     <string name="add_new_note">Add a New Note</string>
     <string name="new_note_title">Title</string>
